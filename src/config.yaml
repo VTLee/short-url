@@ -4,9 +4,6 @@ import:
     - configurapi-handler-logging
 api:
     events:
-        - name: on_error
-          policies:
-            - onErrorHandler
         - name: on_before_request
           policies:
             - logRequestHandler:

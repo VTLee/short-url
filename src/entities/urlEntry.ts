@@ -1,7 +1,4 @@
-import * as uuid from 'uuid/v4';
 import IUrlEntry from '../interfaces/iUrlEntry';
-import * as base32 from 'base32';
-var crypto = require('crypto');
 
 export default class UrlEntry implements IUrlEntry {
     id: string;
@@ -47,11 +44,3 @@ export default class UrlEntry implements IUrlEntry {
     }
 
 };
-
-// async function main() {
-//     let ue = new UrlEntry(undefined, 'me');
-//     console.log(`${JSON.stringify(ue.shortUrl)}`);
-
-// }
-
-// main().then(() => console.log("done")).catch((e) => console.log(e));
