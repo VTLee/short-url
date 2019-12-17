@@ -1,4 +1,4 @@
-import { IEvent, Response, ErrorResponse, LogLevel } from "configurapi";
+import { IEvent, LogLevel } from "configurapi";
 
 export async function checkForGetHandler(event: IEvent) {
 
