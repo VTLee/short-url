@@ -1,0 +1,39 @@
+import:
+    - configurapi-handler-json
+    - configurapi-handler-http
+    - configurapi-handler-logging
+api:
+    events:
+        - name: on_error
+          policies:
+            - onErrorHandler
+        - name: on_before_request
+          policies:
+            - logRequestHandler:
+              - ['token', 'value']
+            - checkForGetHandler
+        - name: on_after_request
+          policies:
+            - logResponseHandler:
+              - ['token', 'value']
+        - name: options
+          policies:
+            - setResponseStatusCodeHandler:
+              - 204
+        - name: ""
+          policies:
+            - setResponseHandler:
+              - 204
+        - name: get_v1_test
+          policies:
+            - myTestHandler
+        - name: list_v1_test
+          policies:
+            - myTestHandler
+        - name: post_v1_shorturl
+          policies:
+            - validateJsonRequestHandler
+            - addEntryHandler
+        - name: delete_v1_shorturl
+          policies:
+            - deleteEntryHandler

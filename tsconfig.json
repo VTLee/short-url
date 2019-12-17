@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es6",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "noImplicitAny": false,
+        "sourceMap": false,
+        "lib": [ "es2015" ]
+    },
+    "exclude": [ "src/scripts/migration" ],
+    "include": [
+        "src/**/*"
+    ]
+}
