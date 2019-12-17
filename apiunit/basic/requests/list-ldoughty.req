@@ -1,0 +1,1 @@
+GET ${shorturl-api}/v1/shorturls?owner=ldoughty

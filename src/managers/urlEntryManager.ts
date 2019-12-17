@@ -6,6 +6,7 @@ import IUrlEntry from "../interfaces/iUrlEntry";
 import IUrlEntryFilter from "../interfaces/iUrlEntryFilter";
 import UrlEntryFilter from "../entities/urlEntryFilter";
 import NotFoundError from "../errors/notFoundError";
+import IUrlEntryPage from "../interfaces/iUrlEntryPage";
 
 export default class UrlEntryManager implements IUrlEntryManager
 {
@@ -28,8 +29,7 @@ export default class UrlEntryManager implements IUrlEntryManager
         return response;
     }
 
-    async getByOwner(ownerId: string): Promise<IUrlEntry[]> {
-        let filter : IUrlEntryFilter = new UrlEntryFilter({owner: ownerId})
+    async getByOwner(filter: UrlEntryFilter): Promise<IUrlEntryPage> {
         return await this.repository.get(filter);
     }
 

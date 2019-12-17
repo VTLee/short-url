@@ -6,6 +6,8 @@ import IUrlEntry from '../../interfaces/iUrlEntry';
 import UrlEntry from '../../entities/urlEntry';
 import IUrlEntryFilter from '../../interfaces/iUrlEntryFilter';
 import NodenamoUrlEntry from './decorators/namoUrlEntry';
+import IUrlEntryPage from '../../interfaces/iUrlEntryPage';
+import UrlEntryPage from '../../entities/urlEntryPage';
 
 export default class UrlEntryNodenamoProvider implements IUrlEntryProvider {
     private client: NodeNamo;
@@ -32,13 +34,15 @@ export default class UrlEntryNodenamoProvider implements IUrlEntryProvider {
         return UrlEntry.fromJson(result);
     }
 
-    async get(filter?: IUrlEntryFilter): Promise<IUrlEntry[]> {
-        return (
-            await this.client.list()
+    async get(filter?: IUrlEntryFilter): Promise<IUrlEntryPage> {
+        let results = await this.client.list()
                 .from(NodenamoUrlEntry)
                 .by(filter[Object.keys(filter).find(k => filter[k] != undefined)])
                 .execute<NodenamoUrlEntry>()
-        ).items.map(e => UrlEntry.fromJson(e));
+        return new UrlEntryPage({
+            items: results.items.map(e => UrlEntry.fromJson(e)),
+            nextPageToken: results.lastEvaluatedKey ? encodeURIComponent(results.lastEvaluatedKey) : undefined
+        });
     }
 
     async update(entry: IUrlEntry): Promise<void> {

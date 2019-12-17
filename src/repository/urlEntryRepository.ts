@@ -4,6 +4,7 @@ import UrlEntry from "../entities/urlEntry";
 import IUrlEntryProvider from "../interfaces/iUrlEntryProvider";
 import UrlEntryProviderFactory from "./providers/urlEntryProviderFactory";
 import IUrlEntryFilter from "../interfaces/iUrlEntryFilter";
+import IUrlEntryPage from "../interfaces/iUrlEntryPage";
 
 export default class UrlEntryRepository implements IUrlEntryRepostiry {
     provider:IUrlEntryProvider;
@@ -16,7 +17,7 @@ export default class UrlEntryRepository implements IUrlEntryRepostiry {
         return await this.provider.add(entry);
     }
 
-    async get(filter: IUrlEntryFilter): Promise<IUrlEntry[]> {
+    async get(filter: IUrlEntryFilter): Promise<IUrlEntryPage> {
         return await this.provider.get(filter);
     }
 

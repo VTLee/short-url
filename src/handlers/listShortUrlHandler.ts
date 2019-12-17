@@ -1,15 +1,22 @@
-import { IEvent, Response, LogLevel } from "configurapi";
+import { IEvent, Response, LogLevel, ErrorResponse } from "configurapi";
+import { PageResponse } from 'configurapi-handler-json';
+import IUrlEntryPage from "../interfaces/iUrlEntryPage";
+import IUrlEntryManager from "../interfaces/iUrlEntryManager";
+import UrlEntryManager from "../managers/urlEntryManager";
+import IUrlEntryFilter from "../interfaces/iUrlEntryFilter";
+import UrlEntryFilter from "../entities/urlEntryFilter";
+import ListUrlEntryView from "../views/ListUrlEntryView";
 
-export async function listShortUrlHandler(event:IEvent)
+export async function listShortUrlHandler(event:IEvent, uManager?:IUrlEntryManager)
 {
     this.emit(LogLevel.Trace, JSON.stringify(event))
-    // let target : string = event.request.path.substr(1);
-    // console.log(`Lookup for ID ${target}`)
-    // let um : IUrlEntryManager = new UrlEntryManager();
-    // let result = await um.getOne(target);
-    // console.log(`Result: ${JSON.stringify(result)}`)
-    // event.request.headers['OVERRIDE_RESPONSE'] = new Response(undefined, 301, { Location: result.target });
-    // this.emit(LogLevel.Trace, "Done with checkForGetHandler")
+    if (!event.params['owner']) {
+        event.response = new ErrorResponse(`Unable to process request.`, 400);
+        return this.complete()
+    }
+    let filter : IUrlEntryFilter = new UrlEntryFilter({owner: event.params['owner']})
 
-    event.response = new Response(`Response: ${JSON.stringify(event)}`, 200)
+    let um : IUrlEntryManager = uManager || new UrlEntryManager();
+    let result : IUrlEntryPage = await um.getByOwner(filter);
+    event.response = new PageResponse(ListUrlEntryView.fromUrlEntries(result.items), result.nextPageToken)
 };
