@@ -6,7 +6,6 @@ import UrlEntry from "../entities/urlEntry";
 
 export async function deleteEntryHandler(event: IEvent, urlEntryManager?: IUrlEntryManager) {
     this.emit(JSON.stringify(event));
-    console.log(JSON.stringify(event));
     let shortUrl : string = event.payload['shortUrl'];
     let um : IUrlEntryManager = new UrlEntryManager();
     if (!shortUrl) {
