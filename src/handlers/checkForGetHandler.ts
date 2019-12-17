@@ -1,22 +1,19 @@
-import { IEvent, Response, ErrorResponse } from "configurapi";
+import { IEvent, Response, ErrorResponse, LogLevel } from "configurapi";
 import IUrlEntryManager from "../interfaces/iUrlEntryManager";
 import UrlEntryManager from "../managers/urlEntryManager";
 
-export async function checkForGetHandler(event: IEvent,
-    urlEntryManager?: IUrlEntryManager) {
-    this.emit(JSON.stringify(event));
-    console.log(JSON.stringify(event));
-    if (event.request.path.lastIndexOf('/') > 0) {
+export async function checkForGetHandler(event: IEvent) {
+    //this.emit(LogLevel.Trace, JSON.stringify(event));
+
+    if (event.name.startsWith('list_') && event.request.path.lastIndexOf('/') === 0) {
+        this.emit(LogLevel.Trace, "Jumping to get route")
+        event.name = "get_v1_shorturl"
+        delete event.params;
+        event.params = {'shorturl': event.request.path.substr(1)}
         return this.continue()
     }
-    let target : string = event.request.path.substr(1);
-    console.log(`Lookup for ID ${target}`)
-    let um : IUrlEntryManager = new UrlEntryManager();
-    let result = await um.getOne(target);
-    console.log(`Result: ${JSON.stringify(result)}`)
-    event.request.method = 'get_v1_test'
-    event.request.headers['OVERRIDE_RESPONSE'] = new Response(undefined, 301, { Location: result.target });
-    return this.complete()
+
+    return this.continue();
 };
 
 /*

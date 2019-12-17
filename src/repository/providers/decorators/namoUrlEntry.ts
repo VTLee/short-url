@@ -1,7 +1,7 @@
 import { DBTable, DBColumn } from 'nodenamo';
 import Config from '../../../config';
 
-@DBTable({ name: Config.TABLE_NAME })
+@DBTable({ name: Config.TABLE_NAME, dataPrefix: 'shorturl' })
 export default class NodenamoUrlEntry {
 
     @DBColumn({ id: true })

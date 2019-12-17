@@ -19,11 +19,9 @@ export default class UrlEntryNodenamoProvider implements IUrlEntryProvider {
             maxRetries: Config.DYNAMODB_MAX_RETRIES,
             region: Config.AWS_DEFAULT_REGION
         });
-        if (Config.DATA_PROVIDER === Config.DATA_PROVIDER_LOCAL_DYNAMODB) {
-            this.baseConfig.endpoint = Config.LOCAL_DYNAMODB_ENDPOINT;
-        }
         this.client = new NodeNamo(new DocumentClient(this.baseConfig));
     }
+
 
     async add(entry: IUrlEntry): Promise<void> {
         await this.client.insert(new NodenamoUrlEntry(entry)).into(NodenamoUrlEntry).execute();

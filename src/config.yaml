@@ -24,12 +24,12 @@ api:
           policies:
             - setResponseHandler:
               - 204
-        - name: get_v1_test
+        - name: get_v1_shorturl
           policies:
-            - myTestHandler
-        - name: list_v1_test
+            - getShortUrlHandler
+        - name: list_v1_shorturl
           policies:
-            - myTestHandler
+            - listShortUrlHandler
         - name: post_v1_shorturl
           policies:
             - validateJsonRequestHandler

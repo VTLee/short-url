@@ -5,6 +5,7 @@ import IUrlEntryManager from "../interfaces/iUrlEntryManager";
 import IUrlEntry from "../interfaces/iUrlEntry";
 import IUrlEntryFilter from "../interfaces/iUrlEntryFilter";
 import UrlEntryFilter from "../entities/urlEntryFilter";
+import NotFoundError from "../errors/notFoundError";
 
 export default class UrlEntryManager implements IUrlEntryManager
 {
@@ -20,7 +21,11 @@ export default class UrlEntryManager implements IUrlEntryManager
     }
 
     async getOne(id: string): Promise<IUrlEntry> {
-        return await this.repository.getOne(id);
+        const response = await this.repository.getOne(id);
+        if (!response) {
+            throw new NotFoundError(`${id} not found`);
+        }
+        return response;
     }
 
     async getByOwner(ownerId: string): Promise<IUrlEntry[]> {

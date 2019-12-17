@@ -6,11 +6,14 @@ export default class Config
     public static DATA_PROVIDER_LOCAL_DYNAMODB = 'local_dynamodb';
     public static DATA_PROVIDER_LIST = [Config.DATA_PROVIDER_AWS, Config.DATA_PROVIDER_LOCAL_DYNAMODB];
 
-    public static DATA_PROVIDER = process.env.LIVE_DATA_PROVIDER || Config.DATA_PROVIDER_AWS;
+    public static DATA_PROVIDER = process.env.DATA_PROVIDER || Config.DATA_PROVIDER_LOCAL_DYNAMODB;
 
     // Database
     public static TABLE_NAME = process.env.TABLE_NAME || "table-name-nn-one";
-    static readonly LOCAL_DYNAMODB_ENDPOINT = 'http://localhost:8000';
+    static readonly LOCAL_DYNAMODB_ENDPOINT = process.env.SHORTURL_API_LOCAL_DYNAMODB_HOST || 'http://localhost:8000';
+    static readonly LOCAL_DYNAMO_DB_ACCESS_KEY = process.env.LOCAL_DYNAMO_DB_ACCESS_KEY || 'a_non_empty_value';
+    static readonly LOCAL_DYNAMO_DB_SECRET_KEY = process.env.LOCAL_DYNAMO_DB_SECRET_KEY || 'a_non_empty_value';
+
 
     // Misc
     public static API_REQUEST_TIMEOUT_IN_MS:number = Number(process.env.API_REQUEST_TIMEOUT_IN_MS) || 3000;

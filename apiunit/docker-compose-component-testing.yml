@@ -1,0 +1,43 @@
+version: "3.1"
+
+services:
+  shorturl:
+    image: mappies/docker-with-aws-cli-and-node:latest
+    container_name: api_unit__api_shorturl_api
+    # logging:
+    #   driver: none
+    volumes:
+      - ..:/app
+    environment:
+      SHORTURL_API_LOCAL_DYNAMODB_HOST: http://dynamodb:8000
+      AWS_ACCESS_KEY_ID: a_non_empty_value
+      AWS_SECRET_ACCESS_KEY: a_non_empty_value
+    networks:
+      default:
+        aliases:
+          - shorturl
+    command: /bin/sh -c "cd app && npm run dev"
+
+  dynamodb:
+    image: amazon/dynamodb-local:latest
+    container_name: api_unit_shorturl_dynamodb
+    logging:
+      driver: none
+    ports:
+      - "127.0.0.1:8000:8000"
+    networks:
+      default:
+        aliases:
+          - dynamodb
+
+  apiunit:
+    image: mappies/node-with-nc:latest
+    container_name: api_unit_shorturl_api_apiunit
+    volumes:
+      - ..:/app
+    networks:
+      default:
+    command: /bin/sh -c "cd app && . apiunit/wait_for_services.sh && npm run apiunit-cicd"
+
+networks:
+  default:

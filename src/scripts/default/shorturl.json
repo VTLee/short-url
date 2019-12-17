@@ -1,0 +1,10 @@
+[
+    {
+        "id": "test",
+        "owner": "ldoughty",
+        "target": "https://ldoughty.com",
+        "enabled": true,
+        "createdTimestamp": "create-ts-1",
+        "modifiedTimestamp": "mod-ts-2"
+    }
+]

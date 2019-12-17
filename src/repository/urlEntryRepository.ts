@@ -13,18 +13,14 @@ export default class UrlEntryRepository implements IUrlEntryRepostiry {
     }
 
     async add(entry: IUrlEntry): Promise<void> {
-        console.log("Add called")
-        
         return await this.provider.add(entry);
     }
 
     async get(filter: IUrlEntryFilter): Promise<IUrlEntry[]> {
-        console.log("get called")
         return await this.provider.get(filter);
     }
 
     async getOne(id: string): Promise<IUrlEntry> {
-        console.log("GetOne called")
         return await this.provider.getOne(id);
     }
 
