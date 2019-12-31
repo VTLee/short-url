@@ -106,3 +106,4 @@ dist
 dist.zip
 dist/
 package-lock.json
+dist.env
