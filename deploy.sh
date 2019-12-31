@@ -1,6 +1,6 @@
 
 # Build S3 Folder Name from Repo Name
-export API_NAME='simple-api'
+export API_NAME='short-url'
 export S3_BUCKET='leemdoughty-lambda-bucket'
 export S3_KEY="$API_NAME/$(date +'%s').zip"
 
@@ -21,7 +21,7 @@ aws s3 --profile cicd cp dist.zip s3://$S3_BUCKET/${S3_KEY} --quiet
 
 
 # Replace S3 folder and filename placeholders sam-api-template
-sed "s#^S3CODEBUCKET.*#S3CODEBUCKET=${S3_BUCKET}#" src/env/simple-api.dev.env > dist.env
+sed "s#^S3CODEBUCKET.*#S3CODEBUCKET=${S3_BUCKET}#" src/env/short-url-api.dev.env > dist.env
 sed -i "s#^S3CODEKEY.*#S3CODEKEY=${S3_KEY}#" dist.env
 cat dist.env 
 echo "Deploting DDB Template"
@@ -29,5 +29,3 @@ sam deploy --profile cicd --template-file sam-ddb-template.yml --stack-name DDB-
 echo "Deploting API Template"
 cat dist.env
 sam deploy --profile cicd --template-file sam-api-template.yml --stack-name API-$API_NAME --capabilities CAPABILITY_IAM  --parameter-overrides $(cat dist.env) --no-fail-on-empty-changeset
-
-# npm install
