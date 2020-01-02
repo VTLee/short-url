@@ -1,29 +1,34 @@
 Transform: 'AWS::Serverless-2016-10-31'
 
 Parameters: 
-  CERTIFICATEARN:
-      Type: String
+  APICERTIFICATEARN:
+    Type: String
   APIDOMAINNAME:
-      Type: String
+    Type: String
+  CFDOMAINNAME:
+    Type: String
+  CFCERTIFICATEARN:
+    Type: String
   S3CODEBUCKET:
-      Type: String
+    Type: String
   S3CODEKEY:
-      Type: String
+    Type: String
   LAMBDAMEMORY:
-      Type: Number
+    Type: Number
   LAMBDATIMEOUT:
-      Type: Number
+    Type: Number
+
 Resources:
 
   ApiGateway:
     Type: 'AWS::Serverless::Api'
     Properties:
       StageName: default
-  
+
   DomainName:
     Type: 'AWS::ApiGateway::DomainName'
     Properties:
-      RegionalCertificateArn: !Ref CERTIFICATEARN
+      RegionalCertificateArn: !Ref APICERTIFICATEARN
       DomainName: !Ref APIDOMAINNAME
       EndpointConfiguration: 
         Types:
@@ -40,7 +45,7 @@ Resources:
   ApiFunction:
     Type: 'AWS::Serverless::Function'
     Properties:
-      FunctionName: simple-api
+      FunctionName: short-url-api
       Handler: node_modules/configurapi-runner-lambda-api/src/index.handler
       Runtime: nodejs10.x
       CodeUri:
@@ -76,6 +81,55 @@ Resources:
       LogGroupName: !Join [/,["/aws/lambda", !Ref ApiFunction ]]
       RetentionInDays: 60
 
+  CloudFront:
+    Type: AWS::CloudFront::Distribution
+    DeletionPolicy: Retain
+    Properties:
+      DistributionConfig: 
+        Aliases:
+          - !Ref CFDOMAINNAME
+        Comment:  !Join 
+        - " "
+        - - "Short URL"
+          - !Ref CFDOMAINNAME 
+          - "deployed with SAM CloudFormation." 
+        CustomErrorResponses:
+        - ErrorCachingMinTTL : 300
+          ErrorCode : 403
+          ResponseCode : 200
+          ResponsePagePath : '/index.html'
+        - ErrorCachingMinTTL : 300
+          ErrorCode : 404
+          ResponseCode : 200
+          ResponsePagePath : '/index.html'
+        DefaultRootObject: index.html
+        Enabled: TRUE
+        HttpVersion: http2
+        IPV6Enabled: TRUE
+        Origins:
+          - Id: !Join [ "-", [ "APIGateway", !Ref ApiGateway ] ]
+            DomainName:  !Sub "${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com"
+            OriginPath: !Join [ "", [ "/", !Ref ApiGateway.Stage ] ]
+            CustomOriginConfig:
+              HTTPPort: 80
+              HTTPSPort: 443
+              OriginProtocolPolicy: "https-only"
+              OriginSSLProtocols:
+                - "TLSv1"
+                - "TLSv1.1"
+                - "TLSv1.2"
+        DefaultCacheBehavior:
+          TargetOriginId: !Join [ "-", [ "APIGateway", !Sub "https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/${ApiGateway.Stage}/" ] ]
+          ForwardedValues:
+            QueryString: 'true'
+          ViewerProtocolPolicy : redirect-to-https
+          Compress: TRUE
+        PriceClass: PriceClass_100
+        ViewerCertificate:
+          AcmCertificateArn: !Ref CFCERTIFICATEARN
+          MinimumProtocolVersion: TLSv1.1_2016
+          SslSupportMethod: sni-only
+
 Outputs:
   DomainName:
     Description: Domain Name of API
@@ -92,3 +146,4 @@ Outputs:
     Value:  default
     Export:
       Name: !Join [ "-", [ !Ref "AWS::StackName", api-stage ] ]
+
